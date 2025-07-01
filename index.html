@@ -5,21 +5,183 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pixel-wise Temporal Frequency-based Deepfake Video Detection</title>
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
-    header { text-align: center; margin-bottom: 40px; }
-    h1 { margin-bottom: 10px; }
-    section { margin-bottom: 30px; }
-    pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
-    a { color: #0366d6; text-decoration: none; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif;
+      background: #f8fafc;
+      color: #222;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px 40px 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      padding: 48px 0 32px 0;
+      background: linear-gradient(90deg, #e0e7ff 0%, #f0fdfa 100%);
+      border-radius: 0 0 28px 28px;
+      box-shadow: 0 2px 12px rgba(60,60,100,0.06);
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: #2d3a6a;
+    }
+    .authors {
+      color: #4b5563;
+      font-size: 1.1rem;
+      margin-bottom: 0;
+    }
+    .affiliations {
+      color: #64748b;
+      font-size: 0.98rem;
+      margin-bottom: 0;
+    }
+    .section {
+      margin-bottom: 40px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(60,60,100,0.04);
+      padding: 32px 32px 22px 32px;
+    }
+    h2 {
+      color: #2563eb;
+      font-size: 1.4rem;
+      margin-bottom: 18px;
+      font-weight: 600;
+    }
+    ul, ol {
+      margin: 0 0 0 18px;
+    }
+    .fig-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(60,60,100,0.03);
+      margin: 28px 0 18px 0;
+      padding: 22px 14px 12px 14px;
+      transition: box-shadow 0.2s;
+    }
+    .fig-card:hover {
+      box-shadow: 0 4px 16px rgba(37,99,235,0.10);
+    }
+    .fig-card img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 6px rgba(60,60,100,0.07);
+    }
+    .fig-title {
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+      font-size: 1.08em;
+      text-align: center;
+    }
+    .fig-desc {
+      color: #64748b;
+      font-size: 0.98em;
+      text-align: center;
+      margin-bottom: 0;
+    }
+    #future-work {
+      text-align: center;
+      background: linear-gradient(90deg, #f0fdfa 0%, #e0e7ff 100%);
+      color: #334155;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border: 2px dashed #a5b4fc;
+      margin-top: 40px;
+    }
+    @media (max-width: 600px) {
+      body { padding: 0 2vw; }
+      .section { padding: 16px 6vw 10px 6vw; }
+      header { padding: 28px 0 12px 0; }
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection [ICCV 2025]</h1>
-    <p>Taehoon Kim, Jongwook Choi, Yonghyun Jeang, Haeun Noh, Jaejun Yoo, Seungryul Baek, Jongwon Choi</p>
+    <h1>Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection <span style="font-size:1rem; color:#64748b; font-weight:400;">[ICCV 2025]</span></h1>
+    <div class="authors"><b>Taehoon Kim</b>, Jongwook Choi, Yonghyun Jeong, Haeun Noh, Jaejun Yoo, Seungryul Baek, Jongwon Choi</div>
+    <div class="affiliations">Chung-Ang Univ, NAVER Cloud, UNIST, Korea</div>
   </header>
 
-  <section id="overview">
-    <h2>Overview</h2>
-    <p>This project captures subtle temporal artifacts by applying a 1D Fourier transform to each pixel over time, then focuses on anomalous regions using an attention module for robust deepfake video detection.</p>
+  <section class="section" id="abstract">
+    <h2>Abstract</h2>
+    <p>
+      We introduce a novel method for deepfake video detection that utilizes <b>pixel-wise temporal frequency spectra</b>. Unlike previous approaches that stack 2D frame-wise spatial frequency spectra, we extract pixel-wise temporal frequency by performing a 1D Fourier transform on the time axis per pixel, effectively identifying temporal artifacts. We also propose an <b>Attention Proposal Module (APM)</b> to extract regions of interest for detecting these artifacts. Our method demonstrates outstanding generalizability and robustness in various challenging deepfake video detection scenarios.
+    </p>
   </section>
+
+  <section class="section" id="contributions">
+    <h2>Key Contributions</h2>
+    <ul>
+      <li>Introduce <b>pixel-wise temporal frequency</b> for deepfake video detection.</li>
+      <li>Design an <b>Attention Proposal Module (APM)</b> to identify regions of interest.</li>
+      <li>Present a <b>joint transformer module</b> leveraging temporal-frequency information.</li>
+      <li>Achieve <b>state-of-the-art performance</b> and generalizability.</li>
+    </ul>
+  </section>
+
+  <section class="section" id="method">
+    <h2>Method & Architecture</h2>
+    <div class="fig-card">
+      <div class="fig-title">Temporal Artifacts & Frequency Extraction</div>
+      <img src="figures/figure2.png" alt="Temporal artifacts and frequency extraction method">
+      <div class="fig-desc">Our method captures subtle temporal artifacts in deepfake videos by applying a 1D Fourier transform to each pixel over time, unlike previous methods that rely on spatial frequency stacking.</div>
+    </div>
+    <div class="fig-card">
+      <div class="fig-title">Proposed Architecture</div>
+      <img src="figures/figure3.png" alt="Frequency Feature Extractor and Joint Transformer Module">
+      <div class="fig-desc">The pipeline consists of a Frequency Feature Extractor (with pixel-wise temporal Fourier transform and Attention Proposal Module) and a Joint Transformer Module for robust deepfake detection.</div>
+    </div>
+    <div style="background:#e0e7ff; border-left:4px solid #2563eb; border-radius:10px; margin:18px 0 24px 0; padding:18px 18px 12px 18px; font-size:1.05em; color:#222;">
+      <b>Proposed Architecture (Mathematical Description):</b><br>
+      <span style="font-size:0.98em; color:#334155;">
+        For extracting temporal frequency <span style="font-family:serif;">F<sup>0</sup></span>, the video clip <span style="font-family:serif;">V</span> is decomposed into temporal frequency components using the Fourier Transform.<br>
+        The frequency feature extractor obtains a part-based frequency feature <span style="font-family:serif;">Z<sup>p</sup></span> and a global frequency feature <span style="font-family:serif;">Z<sup>0</sup></span> using 2D ResNet and an attention proposal module.<br>
+        The part-based and global frequency features enter the feature blender to get a blended feature <span style="font-family:serif;">Z<sup>+</sup></span>, and put the blended features, part-based frequency features, and global frequency features into a joint transformer module to classify real and fake.
+      </span>
+    </div>
+    <ul>
+      <li><b>Pixel-wise Temporal Frequency Extraction:</b> 1D Fourier transform along the time axis for each pixel, capturing subtle temporal artifacts.</li>
+      <li><b>Attention Proposal Module (APM):</b> Learns to focus on regions with temporal artifacts using weak supervision.</li>
+      <li><b>Joint Transformer Module:</b> Fuses global/part-based frequency features and spatio-temporal context for final classification.</li>
+    </ul>
+  </section>
+
+  <section class="section" id="experiments">
+    <h2>Experiments & Results</h2>
+    <div class="fig-card">
+      <div class="fig-title">Attention Proposal Module (APM) Visualization</div>
+      <img src="figures/figure5.png" alt="Visualization of APM proposed regions over time">
+      <div class="fig-desc">The APM automatically focuses on regions (e.g., eyes, mouth) where temporal incoherence is most likely, enabling more precise detection of deepfake artifacts.</div>
+    </div>
+    <div class="fig-card">
+      <div class="fig-title">Performance Comparison</div>
+      <img src="figures/figure1.png" alt="Video-level AUC and method comparison">
+      <div class="fig-desc">Our method achieves state-of-the-art video-level AUC across multiple datasets, demonstrating superior generalization and robustness compared to previous approaches.</div>
+    </div>
+    <ul>
+      <li>Achieves <b>state-of-the-art</b> performance on multiple datasets (FF++, CDF, DFDC, KoDF, etc.).</li>
+      <li>Demonstrates strong <b>generalization</b> in cross-deepfakes and cross-synthesis experiments.</li>
+      <li><b>APM</b> is effective in identifying regions of interest for deepfake detection.</li>
+    </ul>
+  </section>
+
+  <section class="section" id="conclusion">
+    <h2>Conclusion</h2>
+    <p style="text-align: center;">
+      We present a novel forgery detection approach based on pixel-wise temporal frequency. We first demonstrate that temporal frequency can be used to detect forgery and then use experiments to show how it can help where other methods fail. Contrary to spatial frequency, pixel-wise temporal frequency can detect local temporal inconsistency, which makes generalized deepfake video detection possible. We also propose a framework to fuse temporal frequency information with RGB video information. Finally, we perform forgery detection through the automatic mechanism of extracting the region of interest and our solution is more robust and generalized than previous methods.
+    </p>
+  </section>
+
+  <section id="future-work">
+    <h2>Coming Soon</h2>
+    <p>Code, and paper will be released soon.<br>Stay tuned for updates!</p>
+  </section>
+</body>
+</html>
