@@ -255,23 +255,15 @@
     </span>
   </div>
 
+
+
+
   <section class="section" id="abstract">
     <h2>Abstract</h2>
     <p>
       We introduce a novel method for deepfake video detection that utilizes <b>pixel-wise temporal frequency spectra</b>. Unlike previous approaches that stack 2D frame-wise spatial frequency spectra, we extract pixel-wise temporal frequency by performing a 1D Fourier transform on the time axis per pixel, effectively identifying temporal artifacts. We also propose an <b>Attention Proposal Module (APM)</b> to extract regions of interest for detecting these artifacts. Our method demonstrates outstanding generalizability and robustness in various challenging deepfake video detection scenarios.
     </p>
   </section>
-
-  <section class="section" id="contributions">
-    <h2>Key Contributions</h2>
-    <ul>
-      <li>Introduce <b>pixel-wise temporal frequency</b> for deepfake video detection.</li>
-      <li>Design an <b>Attention Proposal Module (APM)</b> to identify regions of interest.</li>
-      <li>Present a <b>joint transformer module</b> leveraging temporal-frequency information.</li>
-      <li>Achieve <b>state-of-the-art performance</b> and generalizability.</li>
-    </ul>
-  </section>
-
   <section class="section" id="method">
     <h2>Method & Architecture</h2>
     <div class="fig-row">
@@ -294,6 +286,7 @@
         The part-based and global frequency features enter the feature blender to get a blended feature <span style="font-family:serif;">Z<sup>+</sup></span>, and put the blended features, part-based frequency features, and global frequency features into a joint transformer module to classify real and fake.
       </span>
     </div> -->
+    
     <ul>
       <li><b>Pixel-wise Temporal Frequency Extraction:</b> 1D Fourier transform along the time axis for each pixel, capturing subtle temporal artifacts.</li>
       <li><b>Attention Proposal Module (APM):</b> Learns to focus on regions with temporal artifacts using weak supervision.</li>
@@ -321,13 +314,21 @@
       <li><b>APM</b> is effective in identifying regions of interest for deepfake detection.</li>
     </ul>
   </section>
-
-  <section class="section" id="conclusion">
+  <section class="section" id="contributions">
+    <h2>Key Contributions</h2>
+    <ul>
+      <li>Introduces <b>pixel-wise temporal frequency</b> for deepfake video detection.</li>
+      <li>Utilizes an <b>Attention Proposal Module (APM)</b> to identify regions of interest.</li>
+      <li>Leverages a <b>joint transformer module</b> to leverage temporal-frequency information.</li>
+      <li>Achieves <b>state-of-the-art performance</b> and generalizability.</li>
+    </ul>
+  </section>
+  <!-- <section class="section" id="conclusion">
     <h2>Conclusion</h2>
     <p style="text-align: center;">
       We present a novel forgery detection approach based on pixel-wise temporal frequency. We first demonstrate that temporal frequency can be used to detect forgery and then use experiments to show how it can help where other methods fail. Contrary to spatial frequency, pixel-wise temporal frequency can detect local temporal inconsistency, which makes generalized deepfake video detection possible. We also propose a framework to fuse temporal frequency information with RGB video information. Finally, we perform forgery detection through the automatic mechanism of extracting the region of interest and our solution is more robust and generalized than previous methods.
     </p>
-  </section>
+  </section> -->
   <section id="limitations-future-work" class="section">
     <h2>Limitations & Future Work</h2>
   
@@ -344,8 +345,7 @@
 
         <li>
           <span style="color:#e11d48; font-weight:600;">Heavy compression</span> (H.264, JPEG, WebP)
-          merges neighboring pixels and diminishes pixel-level motion, inducing
-          <strong style="color:#e11d48;">domain shifts</strong> in the temporal frequency.
+          merges neighboring pixels and diminishes pixel-level motion, inducing domain shifts in the temporal frequency.
         </li>
         <li>
           Compressed videos match the raw signal closely at
@@ -364,12 +364,21 @@
       compression.
     </p>
   
-    <p>
-      This sensitivity to heavy compression remains a limitation. In future work,
-      we will investigate temporal-frequency regularization techniques to
-      mitigate performance degradation and improve robustness under aggressive
-      encoding.
-    </p>
+    <div style="
+        background: linear-gradient(90deg, #fef9c3 0%, #e0e7ff 100%);
+        border-left: 5px solid #f59e42;
+        border-radius: 12px;
+        padding: 20px 22px;
+        margin-bottom: 16px;
+        font-size: 1.08em;
+      ">
+      <strong style="color:#b45309; font-weight:700;">Future Work:</strong>
+      <p style="margin: 12px 0 0 0;">
+        This sensitivity to heavy compression remains a limitation. In future work,
+        we will investigate <span style="color:#e11d48; font-weight:600;">temporal-frequency regularization techniques</span> to
+        mitigate performance degradation.
+      </p>
+    </div>
   </section>
   
   
