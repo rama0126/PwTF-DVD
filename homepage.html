@@ -1,0 +1,99 @@
+# Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-PwTF--DVD-blue?logo=github)](https://github.com/rama0126/PwTF-DVD)
+
+## Overview
+
+Deepfake video detection is getting increasingly in demand as facial synthesis techniques become more realistic and accessible. Traditional detectors focus on spatial frequency artifacts—color discrepancies, boundary blurs, flickering—but often overlook subtle temporal inconsistencies. We introduce a novel approach that performs a **1D Fourier transform on the time axis per pixel**, extracting **pixel-wise temporal frequency** features that are highly sensitive to unnatural movements. An **Attention Proposal Module (APM)** localizes regions prone to temporal artifacts, and a **joint transformer module** fuses these temporal-frequency cues with spatio-temporal context to achieve robust deepfake detection across diverse scenarios :contentReference[oaicite:0]{index=0}.
+
+> **Abstract**  
+> We introduce a deepfake video detection approach that exploits pixel-wise temporal inconsistencies, which traditional spatial frequency-based detectors often overlook. Traditional detectors represent temporal information merely by stacking spatial frequency spectra across frames, resulting in the failure to detect temporal artifacts in the pixel plane. Our approach performs a 1D Fourier transform on the time axis for each pixel, extracting features highly sensitive to temporal inconsistencies, especially in areas prone to unnatural movements. To precisely locate regions containing the temporal artifacts, we introduce an attention proposal module trained in an end-to-end manner. Additionally, our joint transformer module effectively integrates pixel-wise temporal frequency features with spatio-temporal context features, expanding the range of detectable forgery artifacts. Our framework represents a significant advancement in deepfake video detection, providing robust performance across diverse and challenging detection scenarios.
+
+## Key Contributions
+
+- **Pixel-wise Temporal Frequency**  
+  Extracts a 1D Fourier magnitude spectrum per pixel along the time axis to reveal subtle temporal flicker artifacts.
+
+- **Attention Proposal Module (APM)**  
+  Weakly-supervised module that learns to crop and focus on regions with the strongest temporal inconsistencies :contentReference[oaicite:1]{index=1}.
+
+- **Joint Transformer Module**  
+  Fuses temporal-frequency features with raw spatio-temporal representations via spatial and temporal transformer encoders for final classification.
+
+- **State-of-the-Art Generalization**  
+  Outperforms prior methods on multiple unseen datasets (CDF, DFDC-v2, FSh, DFo, DFD, KoDF) using video-level AUC and EER metrics.
+
+## Repository Structure
+
+PwTF-DVD/
+├── data/ # (Optional) Downloaded datasets
+├── src/
+│ ├── frequency_extractor/ # Pixel-wise temporal FFT and APM implementation
+│ ├── joint_transformer/ # STE & TTE modules
+│ ├── models/ # 2D/3D ResNet & training scripts
+│ └── utils/ # Data loaders, preprocessing, evaluation
+├── notebooks/ # Analysis & visualization notebooks
+├── configs/ # Hyperparameter & training configs
+├── results/ # Pretrained checkpoints & logs
+└── README.md # This project page
+
+bash
+복사
+편집
+
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/rama0126/PwTF-DVD.git
+cd PwTF-DVD
+
+# Create and activate a conda environment
+conda create -n pwTF python=3.10 -y
+conda activate pwTF
+
+# Install requirements
+pip install -r requirements.txt
+Usage
+Prepare data
+Download FF++ - training splits and target deepfake datasets (CDF, DFDC-v2, etc.) and place them under data/.
+
+Train
+
+bash
+복사
+편집
+python src/train.py --config configs/train_ffpp.yaml
+Evaluate on unseen datasets
+
+bash
+복사
+편집
+python src/evaluate.py \
+  --checkpoint results/ffpp_best.pth \
+  --dataset cdf \
+  --metrics auc eer
+Visualize temporal-frequency spectrum
+
+bash
+복사
+편집
+jupyter notebook notebooks/temporal_frequency_visualization.ipynb
+Citation
+If you find this work useful, please cite:
+
+bibtex
+복사
+편집
+@inproceedings{kim2025pwTF,
+  title={Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection},
+  author={Kim, Taehoon and Choi, Jongwook and Jeong, Yonghyun and Noh, Haeun and Yoo, Jaejun and Baek, Seungryul and Choi, Jongwon},
+  booktitle={ICCV},
+  year={2025},
+  note={Preprint available on arXiv soon}
+}
+Note: The ICCV 2025 version and arXiv preprint will be released shortly.
+Code and supplementary material available here:
+https://github.com/rama0126/PwTF-DVD
+
+<p align="center"> 📄 _Paper coming soon to ICCV 2025 proceedings_ • 🚀 _Stay tuned for the official arXiv link!_ </p> ```
