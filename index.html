@@ -1,469 +1,484 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection, ICCV 2025</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection — ICCV 2025</title>
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #0b1020;
+      --bg-soft: #10172a;
+      --card: #0f172a;
+      --fg: #e5e7eb;
+      --muted: #94a3b8;
+      --primary: #7c3aed; /* violet-600 */
+      --primary-alt: #06b6d4; /* cyan-500 */
+      --accent: #f59e0b; /* amber-500 */
+      --ring: #22d3ee; /* cyan-400 */
+      --ok: #10b981; /* emerald-500 */
+      --bad: #ef4444; /* red-500 */
+      --border: #1f2a44;
+      --shadow: 0 20px 60px rgba(2,6,23,.35);
+      --radius-xl: 18px;
+    }
+
+    :root.light {
+      --bg: #f7f7fb;
+      --bg-soft: #eef2ff;
+      --card: #ffffff;
+      --fg: #1f2937;
+      --muted: #64748b;
+      --primary: #6d28d9;
+      --primary-alt: #0891b2;
+      --accent: #f59e0b;
+      --ring: #38bdf8;
+      --ok: #059669;
+      --bad: #dc2626;
+      --border: #e5e7eb;
+      --shadow: 0 18px 48px rgba(2,6,23,.08);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif;
-      background: linear-gradient(135deg, #f7f7fa 0%, #f3f4f6 100%);
-      color: #232946;
-      max-width: 950px;
-      margin: 40px auto;
-      padding: 0 20px 40px 20px;
+      margin: 0; padding: 0 20px 60px; max-width: 1100px; margin-left: auto; margin-right: auto;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple SD Gothic Neo", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(124,58,237,.15), transparent 50%),
+        radial-gradient(1000px 400px at 90% -20%, rgba(6,182,212,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg) 100%);
+      color: var(--fg);
     }
-    header {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      margin-bottom: 48px;
-      padding: 56px 0 36px 0;
-      background: linear-gradient(90deg, #fff 0%, #f3f4f6 100%);
-      border-radius: 0 0 32px 32px;
-      box-shadow: 0 4px 24px rgba(60,60,100,0.10);
-      border-bottom: 2px solid #e5e7eb;
+
+    /* === Top Nav === */
+    .topbar { position: sticky; top: 14px; z-index: 40; display: flex; justify-content: space-between; align-items: center; gap: 14px; backdrop-filter: blur(8px);
+      background: color-mix(in oklab, var(--card) 80%, transparent);
+      border: 1px solid var(--border); border-radius: 999px; padding: 10px 14px; box-shadow: var(--shadow);
     }
-    .iccv-badge {
-      position: absolute;
-      top: 24px;
-      right: 36px;
-      display: inline-flex;
-      align-items: center;
-      background: linear-gradient(90deg, #f3f4f6 0%, #fff 100%);
-      color: #232946;
-      font-size: 1.08rem;
-      font-weight: 900;
-      border-radius: 12px;
-      padding: 6px 18px 6px 12px;
-      box-shadow: 0 2px 10px #bae6fd80;
-      gap: 7px;
-      border: 1.5px solid #e5e7eb;
-      letter-spacing: 0.5px;
-      font-family: 'Segoe UI', 'Arial Rounded MT Bold', Arial, sans-serif;
-      text-shadow: 0 2px 8px #fff, 0 1px 0 #f3f4f6;
-      z-index: 2;
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .3px; }
+    .brand .badge { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border);
+      background: linear-gradient(90deg, color-mix(in oklab, var(--card), #fff 8%), color-mix(in oklab, var(--card), #fff 2%));
+      box-shadow: inset 0 -1px 0 rgba(255,255,255,.06);
+      font-size: .92rem; font-weight: 900;
     }
-    .iccv-badge svg {
-      width: 1.5em;
-      height: 1.5em;
-      vertical-align: middle;
-      margin-right: 2px;
-      margin-left: 0;
+    .nav { display: flex; flex-wrap: wrap; gap: 6px; }
+    .nav a { text-decoration: none; color: var(--fg); font-weight: 600; font-size: .92rem; padding: 8px 12px; border-radius: 9px; border: 1px solid transparent; }
+    .nav a:hover { border-color: var(--ring); background: color-mix(in oklab, var(--ring) 16%, transparent); }
+    .actions { display: flex; align-items: center; gap: 8px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border); text-decoration: none; font-weight: 700; color: var(--fg);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--card) 85%, transparent), color-mix(in oklab, var(--card) 95%, transparent));
     }
-    .iccv-badge svg ellipse, .iccv-badge svg circle {
-      opacity: 0.95;
+    .btn.primary { border-color: color-mix(in oklab, var(--primary), #000 20%);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--primary) 30%, var(--card)), color-mix(in oklab, var(--primary) 12%, var(--card)));
+      box-shadow: 0 10px 30px color-mix(in oklab, var(--primary) 40%, transparent);
     }
-    .iccv-badge svg ellipse[cx="32"], .iccv-badge svg ellipse[cx="8"] {
-      fill: #d1fae5;
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(2,6,23,.2); }
+    .btn[aria-disabled="true"] { opacity: .6; pointer-events: none; }
+
+    /* === Hero === */
+    header.hero {
+      margin: 28px 0 34px; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: clip; box-shadow: var(--shadow);
+      background:
+        radial-gradient(1500px 500px at 10% -10%, color-mix(in oklab, var(--primary) 18%, transparent), transparent 40%),
+        radial-gradient(1400px 500px at 90% -20%, color-mix(in oklab, var(--primary-alt) 18%, transparent), transparent 40%),
+        linear-gradient(180deg, color-mix(in oklab, var(--card), #fff 4%), var(--card));
+      padding: clamp(28px, 5vw, 48px);
     }
-    .iccv-badge svg ellipse[cx="20"] {
-      fill: #e5e7eb;
+    .hero h1 { margin: 0 0 8px; font-size: clamp(1.6rem, 2.8vw, 2.2rem); line-height: 1.2; letter-spacing: -0.01em; }
+    .sub { color: var(--muted); font-size: 1rem; margin-top: 4px; }
+    .cta { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px; }
+
+    /* === Sections === */
+    .section { margin: 28px 0; padding: 26px; border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--card); box-shadow: var(--shadow); }
+    .section h2 { margin: 0 0 14px; font-size: 1.25rem; letter-spacing: -0.01em; }
+    .grid { display: grid; gap: 18px; grid-template-columns: repeat(12, 1fr); }
+    .card { background: color-mix(in oklab, var(--card), #fff 1%); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); }
+    .span-4 { grid-column: span 4; }
+    .span-8 { grid-column: span 8; }
+    .span-6 { grid-column: span 6; }
+    @media (max-width: 980px) {
+      .span-4, .span-6, .span-8 { grid-column: span 12; }
     }
-    .iccv-badge svg circle {
-      fill: #fef9c3;
-      stroke: #fde68a;
-    }
-    .iccv-badge svg path[stroke="#22c55e"] {
-      stroke: #a7f3d0;
-    }
-    .iccv-badge svg path[stroke="#fbbf24"] {
-      stroke: #fde68a;
-    }
-    .authors {
-      color: #334155;
-      font-size: 1.13rem;
-      margin-bottom: 2px;
-      text-align: center;
-    }
-    .affiliations {
-      color: #64748b;
-      font-size: 1.01rem;
-      margin-bottom: 0;
-      text-align: center;
-    }
-    .section {
-      margin-bottom: 44px;
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 2px 12px rgba(60,60,100,0.04);
-      padding: 36px 36px 26px 36px;
-      border: 1.5px solid #e5e7eb;
-    }
-    h2 {
-      color: #232946;
-      font-size: 1.45rem;
-      margin-bottom: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      text-shadow: none;
-    }
-    ul, ol {
-      margin: 0 0 0 18px;
-    }
-    .fig-row {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: 32px;
-      justify-content: space-between;
-      align-items: stretch;
-      margin: 28px 0 18px 0;
-      width: 100%;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .fig-card {
-      flex: 1 1 0;
-      max-width: 380px;
-      height: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #f7f7fa;
-      border-radius: 14px;
-      box-shadow: 0 1px 8px rgba(60,60,100,0.06);
-      padding: 24px 16px 14px 16px;
-      border: 1.2px solid #e5e7eb;
-      transition: box-shadow 0.2s;
-    }
-    .fig-card.wide {
-      flex: 2 1 0;
-      max-width: 800px;
-      height: auto;
-      padding-left: 0;
-      padding-right: 0;
-    }
-    .fig-card:hover {
-      box-shadow: 0 6px 24px rgba(37,99,235,0.13);
-    }
-    .fig-card img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      box-shadow: 0 2px 12px rgba(60,60,100,0.09);
-      border: 1.2px solid #e5e7eb;
-    }
-    .fig-card.wide img {
-      display: block;
-      width: 600px;
-      max-width: 95%;
-      margin: 0 auto 12px auto;
-      object-fit: contain;
-      box-shadow: 0 4px 24px rgba(60,60,100,0.10);
-      border-radius: 14px;
-      border: 1.2px solid #e5e7eb;
-    }
-    @media (max-width: 1100px) {
-      .fig-row { flex-wrap: wrap; }
-      .fig-card, .fig-card.wide { max-width: 100%; min-width: 0; }
-    }
-    @media (max-width: 700px) {
-      .fig-row { flex-direction: column; gap: 18px; }
-      .iccv-badge {
-        position: static;
-        margin: 18px auto 0 auto;
-        display: flex;
-        justify-content: center;
-      }
-    }
-    .fig-title {
-      font-weight: 700;
-      color: #232946;
-      margin-bottom: 7px;
-      font-size: 1.13em;
-      text-align: center;
-    }
-    .fig-desc {
-      color: #64748b;
-      font-size: 1em;
-      text-align: center;
-      margin-bottom: 0;
-    }
-    #future-work {
-      text-align: center;
-      background: #f3f4f6;
-      color: #232946;
-      font-size: 1.13rem;
-      font-weight: 500;
-      border: 2px dashed #fbbf24;
-      margin-top: 44px;
-      border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(60,60,100,0.06);
-      padding: 28px 0 18px 0;
-    }
-    .proj-btn {
-      display: inline-flex;
-      align-items: center;
-      padding: 10px 22px 10px 14px;
-      border-radius: 8px;
-      background: #fff;
-      color: #232946;
-      font-weight: 600;
-      font-size: 1.08em;
-      text-decoration: none;
-      box-shadow: 0 2px 8px rgba(37,99,235,0.08);
-      border: 1.5px solid #e5e7eb;
-      margin: 0;
-      transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-    }
-    .proj-btn svg {
-      margin-right: 7px;
-      fill: currentColor !important;
-    }
-    .proj-btn:not(.disabled):hover {
-      background: #fde68a;
-      color: #232946;
-      border-color: #fbbf24;
-    }
-    .proj-btn.disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-    @media (max-width: 600px) {
-      body { padding: 0 2vw; }
-      .section { padding: 16px 4vw 10px 4vw; }
-      header { padding: 24px 0 10px 0; }
-      h1 { font-size: 1.3rem; }
-    }
+
+    figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+    figure img, figure video { width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--border); background: #000; }
+    figcaption { color: var(--muted); font-size: .92rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .source a { color: var(--primary-alt); text-decoration: none; font-weight: 600; }
+    .source a:hover { text-decoration: underline; }
+
+    /* Pill callouts */
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border); background: color-mix(in oklab, var(--ring) 10%, transparent); color: var(--fg); font-weight: 600; }
+
+    /* Code block for BibTeX */
+    .codebox { position: relative; font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9rem; background: #0b1220; color: #cbd5e1; border: 1px solid var(--border); border-radius: 12px; padding: 16px; overflow-x: auto; }
+    .codebox .traffic { position: absolute; top: 10px; right: 12px; display: flex; gap: 6px; }
+    .traffic i { width: 10px; height: 10px; border-radius: 50%; }
+    .traffic .r { background: #ef4444; }
+    .traffic .y { background: #f59e0b; }
+    .traffic .g { background: #10b981; }
+
+    /* Footer / helpers */
+    footer { margin: 30px 0 0; color: var(--muted); text-align: center; font-size: .9rem; }
+    .scrolltop { position: fixed; right: 16px; bottom: 16px; z-index: 50; border-radius: 999px; width: 46px; height: 46px; display: grid; place-items: center; border: 1px solid var(--border);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--card) 85%, transparent), color-mix(in oklab, var(--card) 95%, transparent)); box-shadow: var(--shadow); cursor: pointer; opacity: .9; }
+    .scrolltop:hover { transform: translateY(-2px); }
+
+    /* Toggle */
+    .toggle { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; cursor: pointer; }
+    .toggle input { display: none; }
+
+    /* Subtle list styling */
+    ul { margin-top: 8px; }
+    li { margin: 6px 0; }
+  
+    /* === Badges === */
+    .badge.highlight{ background: linear-gradient(90deg,#fff 0%, #fef3c7 100%); color:#92400e; border-color:#f59e0b; }
+
+    /* === Media Slider === */
+    .media-slider{ position:relative; display:flex; align-items:center; gap:10px; }
+    .slides{ display:grid; grid-auto-flow:column; grid-auto-columns:100%; overflow:hidden; scroll-snap-type:x mandatory; border:1px solid var(--border); border-radius:14px; background:#000; width:100%; }
+    .slide{ scroll-snap-align:start; padding:10px; }
+    .player{ aspect-ratio:16/9; width:100%; background:#000; display:grid; place-items:center; border-radius:12px; border:1px solid var(--border); overflow:hidden; }
+    .player video{ width:100%; height:100%; object-fit:contain; background:#000; }
+    .arrow{ width:42px; height:42px; display:grid; place-items:center; border-radius:999px; border:1px solid var(--border); background:var(--card); box-shadow:var(--shadow); cursor:pointer; }
+    .arrow:hover{ transform:translateY(-1px); }
+    @media (max-width:700px){ .arrow{ display:none; } }
+
+    .thumbs{ margin-top:12px; display:flex; gap:10px; overflow-x:auto; padding:4px 2px 6px 2px; }
+    .thumb{ display:flex; flex-direction:column; align-items:center; gap:6px; min-width:160px; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:6px; cursor:pointer; }
+    .thumb img{ width:160px; aspect-ratio:16/9; object-fit:cover; border-radius:8px; border:1px solid var(--border); background:#111; }
+    .thumb span{ font-size:.85rem; color:var(--fg); font-weight:600; }
+    .thumb:focus,.thumb:hover{ outline:2px solid var(--ring); }
+
   </style>
 </head>
 <body>
-  <header>
-    <a href="https://iccv.thecvf.com/" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
-      <span class="iccv-badge">
-        <svg viewBox="0 0 36 32" fill="none" style="margin-right:6px;">
-          <!-- 해 -->
-          <circle cx="28" cy="8" r="5" fill="#fde68a" stroke="#fbbf24" stroke-width="1.2"/>
-          <!-- 야자수 줄기 -->
-          <rect x="16.5" y="14" width="3" height="12" rx="1.2" fill="#334155"/>
-          <!-- 야자수 잎 -->
-          <path d="M18 15 Q14 10 8 12" stroke="#22c55e" stroke-width="2" fill="none"/>
-          <path d="M18 15 Q22 10 28 12" stroke="#22c55e" stroke-width="2" fill="none"/>
-          <path d="M18 15 Q16 8 12 7" stroke="#16a34a" stroke-width="1.2" fill="none"/>
-          <path d="M18 15 Q20 8 24 7" stroke="#16a34a" stroke-width="1.2" fill="none"/>
-          <!-- 파도 -->
-          <path d="M4 28 Q10 26 18 28 Q26 30 32 28" stroke="#60a5fa" stroke-width="1.5" fill="none"/>
-        </svg>
-        ICCV 2025
-      </span>
-    </a>
-    <h1>
-      Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection
-    </h1>
-    <div class="authors">Taehoon Kim, Jongwook Choi, Yonghyun Jeong, Haeun Noh, Jaejun Yoo, Seungryul Baek, Jongwon Choi</div>
-    <div class="affiliations">Chung-Ang Univ, NAVER Cloud, UNIST, Korea</div>
-  </header>
-
-  <div style="display:flex; justify-content:center; gap:18px; margin:32px 0 24px 0;">
-    <a href="https://github.com/rama0126/PwTF-DVD" class="proj-btn" target="_blank" rel="noopener">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="#333" style="vertical-align:middle; margin-right:7px;"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.11-.75.41-1.27.74-1.56-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.7.42.36.79 1.09.79 2.2 0 1.59-.01 2.87-.01 3.26 0 .31.21.68.8.56C20.71 21.39 24 17.08 24 12c0-6.27-5.23-11.5-12-11.5z"/></svg>
-      GitHub
-    </a>
-    <a href="https://arxiv.org/abs/2507.02398" class="proj-btn" target="_blank" rel="noopener">
-      <svg width="22" height="22" viewBox="0 0 32 32" style="vertical-align:middle; margin-right:7px;"><rect width="32" height="32" rx="6" fill="#b31b1b"/><text x="16" y="22" text-anchor="middle" font-size="15" fill="#fff" font-family="Arial, sans-serif">arXiv</text></svg>
-      arXiv
-    </a>
-    <span class="proj-btn disabled">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563eb" style="vertical-align:middle; margin-right:7px;"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8.83A2 2 0 0 0 19.41 7L15 2.59A2 2 0 0 0 13.17 2H6zm7 1.5L18.5 9H15a2 2 0 0 1-2-2V3.5z"/></svg>
-      ICCV Paper
-    </span>
-    <span class="proj-btn disabled">
-      <svg width="22" height="22" viewBox="0 0 32 32" style="vertical-align:middle; margin-right:7px;"><circle cx="16" cy="16" r="16" fill="#FFD21F"/><ellipse cx="11" cy="13.5" rx="2" ry="2.5" fill="#fff"/><ellipse cx="21" cy="13.5" rx="2" ry="2.5" fill="#fff"/><ellipse cx="11" cy="14" rx="1" ry="1.5" fill="#333"/><ellipse cx="21" cy="14" rx="1" ry="1.5" fill="#333"/><path d="M10 20c1.5 2 6.5 2 8 0" stroke="#333" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
-      Hugging Face Demo
-    </span>
+  <!-- Topbar -->
+  <div class="topbar" role="navigation" aria-label="Primary">
+    <div class="brand">
+      <img src="figures/ICCV_2025.png" alt="ICCV 2025" style="height:60px;width:auto;border-radius:6px;border:1px solid var(--border);background:#fff;" />
+    </div>
+    <nav class="nav">
+      <a href="#demos">Demos</a>
+      <a href="#abstract">Abstract</a>
+      <a href="#method">Method</a>
+      <a href="#experiments">Experiments</a>
+      <a href="#limitations">Limitations</a>
+      <a href="#citation">Citation</a>
+      <a href="#ack">Acknowledgement</a>
+    </nav>
+    <div class="actions">
+      <label class="toggle" title="Toggle theme">
+        <input type="checkbox" id="modeToggle" />
+        <span>🌗 Theme</span>
+      </label>
+    </div>
   </div>
 
+  <!-- Hero -->
+  <header class="hero">
+    <div style="text-align:center;">
+      <h1>Beyond Spatial Frequency: Pixel‑wise Temporal Frequency‑based Deepfake Video Detection</h1>
+      <div class="sub">Taehoon Kim, Jongwook Choi, Yonghyun Jeong, Haeun Noh, Jaejun Yoo, Seungryul Baek, Jongwon Choi*</div>
+      <div class="sub">Chung‑Ang Univ · NAVER Cloud · UNIST</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 18px; justify-content: center;">
+      <img src="figures/CAU.png" alt="Chung-Ang University" style="height:40px;width:80px;object-fit:contain;border-radius:6px;background:#fff;border:none;" />
+      <img src="figures/NAVERCLOUD.png" alt="NAVER Cloud" style="height:70px;width:140px;object-fit:contain;border-radius:6px;background:#fff;border:none;" />
+      <img src="figures/UNIST.png" alt="UNIST" style="height:50px;width:100px;object-fit:contain;border-radius:6px;background:#fff;border:none;" />
+    </div>
+    <div class="cta" style="display: flex; justify-content: center; gap: 12px;">
+      <a class="btn" href="https://github.com/rama0126/PwTF-DVD" target="_blank" rel="noopener" aria-label="GitHub Repository" style="display: flex; align-items: center;">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="vertical-align:middle;margin-right:6px;" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+            -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2
+            -3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82.64
+            -.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08
+            2.11.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+            1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub
+      </a>
+      <a class="btn" href="https://arxiv.org/abs/2507.02398" target="_blank" rel="noopener" aria-label="arXiv" style="display:flex;align-items:center;gap:6px;">
+        <svg width="20" height="20" viewBox="0 0 32 32" fill="none" style="vertical-align:middle;" aria-hidden="true">
+          <rect width="32" height="32" rx="6" fill="#B31B1B"/>
+          <text x="16" y="22" text-anchor="middle" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="#fff" font-weight="bold">arXiv</text>
+        </svg>
+        arXiv
+      </a>
+    <a class="btn" href="#" style="display:flex;align-items:center;gap:6px;pointer-events:none;opacity:0.6;background:#eee;color:#444;">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="none" style="vertical-align:middle;" aria-hidden="true">
+        <rect width="32" height="32" rx="6" fill="#1B6CB3"/>
+        <text x="16" y="22" text-anchor="middle" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="#fff" font-weight="bold">ICCV</text>
+      </svg>
+      ICCV paper
+    </a>
+    </div>
 
+    <div style="display: flex; justify-content: flex-end;">
+      <span class="badge highlight" title="ICCV 2025 Highlight" style="background:none;">⭐ We got <b>Highlight</b>!</span>
+    </div>
 
+  </header>
 
-  <section class="section" id="abstract">
+  <!-- DEMOS -->
+  <section id="demos" class="section">
+    <h2>Interactive Demos</h2>
+
+    <div class="media-slider" aria-label="Deepfake demo carousel">
+      <button class="arrow prev" aria-label="Previous">◀</button>
+      <div class="slides" id="slides" tabindex="0">
+        <!-- Slide 1: Shining (AVI) -->
+        <div class="slide" data-index="0">
+          <figure>
+            <div class="player">
+              <video controls playsinline preload="metadata" oncontextmenu="return false;" controlsList="nodownload">
+                <source src="figures/shining.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <figcaption>
+              <!-- <span>shining.avi (AVI)</span> -->
+              <span class="source">Source: <a href="https://github.com/ZhendongWang6/AltFreezing" target="_blank" rel="noopener">AltFreezing GitHub</a></span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <!-- Slide 2: Baby (MP4) -->
+        <div class="slide" data-index="1">
+          <figure>
+            <div class="player">
+              <video controls playsinline preload="metadata" oncontextmenu="return false;" controlsList="nodownload">
+                <source src="figures/baby.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <figcaption>
+              <!-- <span>baby.mp4 (MP4)</span> -->
+              <span class="source">Source: <a href="https://www.reddit.com/r/GenAI4all/comments/1mrvx89/ai_baby_videos_are_going_viral_cute_innovation_or/" target="_blank" rel="noopener">Reddit — GenAI4all</a></span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <!-- Slide 3: Karina (MP4) -->
+        <div class="slide" data-index="2">
+          <figure>
+            <!-- 
+              동영상 크기를 조절하려면 아래 max-width 값을 변경하세요.
+              예시: max-width: 260px; (기본값)
+              더 크게 하고 싶으면 300px, 320px 등으로 바꿔주세요.
+            -->
+            <div 
+              class="player" 
+              style="
+                position: relative; 
+                aspect-ratio: 9/16; 
+                background: #000; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                overflow: hidden; 
+                max-width: 300px; /* ← 여기 숫자를 키우면 동영상이 커집니다 */
+                margin: 0 auto;
+              "
+            >
+              <video 
+                controls 
+                playsinline 
+                preload="metadata" 
+                oncontextmenu="return false;" 
+                controlsList="nodownload"
+                style="width: 100%; height: 100%; object-fit: contain; background: #000; display: block;"
+              >
+                <source src="figures/tiktok.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <figcaption>
+              <span class="source">Source: <a href="https://www.tiktok.com/@wildromance10/video/7266665964429708545?is_from_webapp=1&sender_device=pc&web_id=7536255224983193089" target="_blank" rel="noopener">TikTok</a></span>
+            </figcaption>
+          </figure>
+        </div>
+
+      </div>
+      <button class="arrow next" aria-label="Next">▶</button>
+    </div>
+
+  </section>
+
+  <!-- Abstract -->
+  <section id="abstract" class="section">
     <h2>Abstract</h2>
     <p>
-      We introduce a novel method for deepfake video detection that utilizes <b>pixel-wise temporal frequency spectra</b>. Unlike previous approaches that stack 2D frame-wise spatial frequency spectra, we extract pixel-wise temporal frequency by performing a 1D Fourier transform on the time axis per pixel, effectively identifying temporal artifacts. We also propose an <b>Attention Proposal Module (APM)</b> to extract regions of interest for detecting these artifacts. Our method demonstrates outstanding generalizability and robustness in various challenging deepfake video detection scenarios.
+      We introduce a novel method for deepfake video detection that utilizes <b>pixel‑wise temporal frequency spectra</b>. Unlike previous approaches that stack 2D frame‑wise spatial frequency spectra, we extract pixel‑wise temporal frequency by performing a 1D Fourier transform on the time axis per pixel, effectively identifying temporal artifacts. We also propose an <b>Attention Proposal Module (APM)</b> to extract regions of interest for detecting these artifacts. Our method demonstrates outstanding generalizability and robustness in various challenging deepfake video detection scenarios.
     </p>
   </section>
-  <section class="section" id="method">
+
+  <!-- Method & Architecture -->
+  <section id="method" class="section">
     <h2>Method & Architecture</h2>
-    <div class="fig-row">
-      <div class="fig-card">
-        <div class="fig-title">Frequency Extraction</div>
-        <img src="figures/figure2.png" alt="Temporal artifacts and frequency extraction method">
-        <div class="fig-desc">Our method captures subtle temporal artifacts in deepfake videos by applying a 1D Fourier transform to each pixel over time, unlike previous methods that rely on spatial frequency stacking.</div>
+    <div class="grid">
+      <div class="card span-4">
+        <figure>
+          <img src="figures/figure2.png" alt="Temporal artifacts and pixel‑wise frequency extraction" />
+          <figcaption>
+            <span><strong>Frequency Extraction</strong>: 1D FFT per‑pixel along time captures subtle temporal artifacts.</span>
+          </figcaption>
+        </figure>
       </div>
-      <div class="fig-card wide">
-        <div class="fig-title">Proposed Architecture</div>
-        <img src="figures/figure3.png" alt="Frequency Feature Extractor and Joint Transformer Module">
-        <div class="fig-desc">The pipeline consists of a Frequency Feature Extractor (with pixel-wise temporal Fourier transform and Attention Proposal Module) and a Joint Transformer Module for robust deepfake detection.</div>
+      <div class="card span-8">
+        <figure>
+          <img src="figures/figure3.png" alt="Frequency Feature Extractor + Joint Transformer Module" />
+          <figcaption>
+            <span><strong>Architecture</strong>: Frequency Feature Extractor + APM → Joint Transformer for robust detection.</span>
+          </figcaption>
+        </figure>
       </div>
     </div>
-    <!-- <div style="background:#e0e7ff; border-left:4px solid #2563eb; border-radius:10px; margin:18px 0 24px 0; padding:18px 18px 12px 18px; font-size:1.05em; color:#222;">
-      <b>Proposed Architecture (Mathematical Description):</b><br>
-      <span style="font-size:0.98em; color:#334155;">
-        For extracting temporal frequency <span style="font-family:serif;">F<sup>0</sup></span>, the video clip <span style="font-family:serif;">V</span> is decomposed into temporal frequency components using the Fourier Transform.<br>
-        The frequency feature extractor obtains a part-based frequency feature <span style="font-family:serif;">Z<sup>p</sup></span> and a global frequency feature <span style="font-family:serif;">Z<sup>0</sup></span> using 2D ResNet and an attention proposal module.<br>
-        The part-based and global frequency features enter the feature blender to get a blended feature <span style="font-family:serif;">Z<sup>+</sup></span>, and put the blended features, part-based frequency features, and global frequency features into a joint transformer module to classify real and fake.
-      </span>
-    </div> -->
-    
     <ul>
-      <li><b>Pixel-wise Temporal Frequency Extraction:</b> 1D Fourier transform along the time axis for each pixel, capturing subtle temporal artifacts.</li>
-      <li><b>Attention Proposal Module (APM):</b> Learns to focus on regions with temporal artifacts using weak supervision.</li>
-      <li><b>Joint Transformer Module:</b> Fuses global/part-based frequency features and spatio-temporal context for final classification.</li>
+      <li><b>Pixel‑wise Temporal Frequency</b>: 1D FFT on the time axis per pixel to capture subtle artifacts.</li>
+      <li><b>Attention Proposal Module (APM)</b>: Weakly‑supervised focus on temporal‑artifact regions.</li>
+      <li><b>Joint Transformer</b>: Fuses global/part‑based frequency signals and spatio‑temporal context.</li>
     </ul>
   </section>
 
-  <section class="section" id="experiments">
+  <!-- Experiments -->
+  <section id="experiments" class="section">
     <h2>Experiments & Results</h2>
-    <div class="fig-row">
-      <div class="fig-card">
-        <div class="fig-title">Attention Proposal Module (APM) Visualization</div>
-        <img src="figures/figure5.png" alt="Visualization of APM proposed regions over time">
-        <div class="fig-desc">The APM automatically focuses on regions (e.g., eyes, mouth) where temporal incoherence is most likely, enabling more precise detection of deepfake artifacts.</div>
+    <div class="grid">
+      <div class="card span-6">
+        <figure>
+          <img src="figures/figure5.png" alt="APM visualization focusing on eyes/mouth regions" />
+          <figcaption>
+            <span>APM highlights regions (eyes, mouth) where temporal incoherence is likely.</span>
+          </figcaption>
+        </figure>
       </div>
-      <div class="fig-card">
-        <div class="fig-title">Performance Comparison</div>
-        <img src="figures/figure1.png" alt="Video-level AUC and method comparison">
-        <div class="fig-desc">Our method achieves state-of-the-art video-level AUC across multiple datasets, demonstrating superior generalization and robustness compared to previous approaches.</div>
+      <div class="card span-6">
+        <figure>
+          <img src="figures/figure1.png" alt="Video‑level AUC comparison across datasets" />
+          <figcaption>
+            <span>Consistent SOTA video‑level AUC across datasets demonstrates strong generalization.</span>
+          </figcaption>
+        </figure>
       </div>
     </div>
     <ul>
-      <li>Achieves <b>state-of-the-art</b> performance on multiple datasets (FF++, CDF, DFDC, KoDF, etc.).</li>
-      <li>Demonstrates strong <b>generalization</b> in cross-deepfakes and cross-synthesis experiments.</li>
-      <li><b>APM</b> is effective in identifying regions of interest for deepfake detection.</li>
+      <li>SOTA performance on FF++, CDF, DFDC, KoDF, etc.</li>
+      <li>Strong cross‑deepfakes and cross‑synthesis generalization.</li>
+      <li>APM effectively identifies temporally inconsistent regions.</li>
     </ul>
   </section>
-  <section class="section" id="contributions">
-    <h2>Key Contributions</h2>
-    <ul>
-      <li>Introduces <b>pixel-wise temporal frequency</b> for deepfake video detection.</li>
-      <li>Utilizes an <b>Attention Proposal Module (APM)</b> to identify regions of interest.</li>
-      <li>Leverages a <b>joint transformer module</b> to leverage temporal-frequency information.</li>
-      <li>Achieves <b>state-of-the-art performance</b> and generalizability.</li>
-    </ul>
-  </section>
-  <!-- <section class="section" id="conclusion">
-    <h2>Conclusion</h2>
-    <p style="text-align: center;">
-      We present a novel forgery detection approach based on pixel-wise temporal frequency. We first demonstrate that temporal frequency can be used to detect forgery and then use experiments to show how it can help where other methods fail. Contrary to spatial frequency, pixel-wise temporal frequency can detect local temporal inconsistency, which makes generalized deepfake video detection possible. We also propose a framework to fuse temporal frequency information with RGB video information. Finally, we perform forgery detection through the automatic mechanism of extracting the region of interest and our solution is more robust and generalized than previous methods.
-    </p>
-  </section> -->
-  <section id="limitations-future-work" class="section">
+
+  <!-- Limitations & Future Work -->
+  <section id="limitations" class="section">
     <h2>Limitations & Future Work</h2>
-    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 28px;">
-      <div style="flex: 2 1 340px; min-width: 260px;">
-        <div style="background: linear-gradient(90deg, #f3f4f6 0%, #fff 100%); border-left: 5px solid #fbbf24; border-radius: 12px; padding: 20px 22px; margin-bottom: 16px; font-size: 1.08em;">
-          <strong style="color:#b45309; font-weight:700;">Limitations:</strong>
-          <ul style="margin: 12px 0 0 20px; padding: 0; list-style-type: disc;">
-            <li>
-              <span style="color:#e11d48; font-weight:600;">Heavy compression</span> (H.264, JPEG, WebP)
-              merges neighboring pixels and diminishes pixel-level motion, inducing domain shifts in the temporal frequency.
-            </li>
-            <li>
-              Compressed videos align with the raw signal closely at
-          <span style="color:#7c3aed; font-weight:600;">low frequencies</span>,
-          but diverge significantly in the
-          <span style="color:#f43f5e; font-weight:600;">high-frequency</span> range.
-            </li>
-          </ul>
-        </div>
+    <div class="grid">
+      <div class="card span-8">
+        <div class="pill" style="margin-bottom:10px;">Known Limitation</div>
+        <ul>
+          <li><b>Heavy compression</b> (H.264/JPEG/WebP) merges neighboring pixels, weakening pixel‑level motion → temporal‑frequency shift.</li>
+          <li>Low‑frequency components align with raw signals, but <b>high‑frequency</b> components diverge after compression.</li>
+        </ul>
+        <div class="pill" style="margin:14px 0 8px;">Future Work</div>
+        <p>We will investigate <b>temporal‑frequency regularization</b> to mitigate compression‑induced degradation.</p>
       </div>
-      <div style="flex: 1 1 320px; min-width: 200px; display: flex; flex-direction: column; justify-content: center; align-items: stretch; margin-top: 0;">
-        <img src="figures/figureE.png" alt="Limitation Illustration" style="max-width: 320px; width: 100%; height: 100%; object-fit: contain; border-radius: 12px; box-shadow: 0 2px 12px rgba(60,60,100,0.09); border: 1.2px solid #e5e7eb; background: #fff; margin-top: 0;" />
-        <div style="font-size: 0.98em; color: #64748b; margin-top: 8px;">
-          We measured the average pixel-wise temporal frequency under various compression schemes (H.264, JPEG, WebP).
-        </div>
+      <div class="card span-4">
+        <figure>
+          <img src="figures/figureE.png" alt="Average pixel‑wise temporal frequency under compression" />
+          <figcaption>
+            <span>Average temporal‑frequency under H.264/JPEG/WebP compression.</span>
+          </figcaption>
+        </figure>
       </div>
-    </div>
-    <div style="background: linear-gradient(90deg, #f3f4f6 0%, #fff 100%); border-left: 5px solid #fbbf24; border-radius: 12px; padding: 20px 22px; margin-top: 18px; font-size: 1.08em;">
-      <strong style="color:#b45309; font-weight:700;">Future Work:</strong>
-      <p style="margin: 12px 0 0 0;">
-        This sensitivity to heavy compression remains a limitation. In future work,
-        we will investigate <span style="color:#e11d48; font-weight:600;">temporal-frequency regularization techniques</span> to
-        mitigate performance degradation.
-      </p>
     </div>
   </section>
-  
-  
 
-
-
-  <section id="citation" class="section" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 2px solid #e2e8f0; max-width: 900px; margin: 40px auto 0 auto; padding: 32px 0 24px 0; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-    <div style="text-align: center; margin-bottom: 24px;">
-      <h3 style="color: #1e293b; font-size: 1.4em; margin-bottom: 8px; letter-spacing: 0.5px; font-weight: 700;">📚 Citation</h3>
-      <p style="color: #64748b; font-size: 1em; margin: 0;">Cite our paper using the following BibTeX entry</p>
+  <!-- Citation -->
+  <section id="citation" class="section">
+    <h2>📚 Citation</h2>
+    <div class="codebox" id="bibtexBox">
+      <div class="traffic"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+<pre>@misc{kim2025spatialfrequencypixelwisetemporal,
+  title        = {Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection},
+  author       = {Taehoon Kim and Jongwook Choi and Yonghyun Jeong and Haeun Noh and Jaejun Yoo and Seungryul Baek and Jongwon Choi},
+  year         = {2025},
+  eprint       = {2507.02398},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.CV},
+  url          = {https://arxiv.org/abs/2507.02398}
+}</pre>
     </div>
-    <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border: 1px solid #475569; border-radius: 12px; padding: 20px; margin: 0 24px; font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; font-size: 0.92em; color: #e2e8f0; overflow-x: auto; white-space: pre-wrap; box-shadow: 0 8px 32px rgba(0,0,0,0.15); position: relative;">
-      <div style="position: absolute; top: 12px; right: 16px; display: flex; gap: 6px;">
-        <div style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></div>
-        <div style="width: 12px; height: 12px; border-radius: 50%; background: #f59e0b;"></div>
-        <div style="width: 12px; height: 12px; border-radius: 50%; background: #10b981;"></div>
-      </div>
-      <div style="margin-top: 8px;">
-@misc{kim2025spatialfrequencypixelwisetemporal,
-      title={Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection}, 
-      author={Taehoon Kim and Jongwook Choi and Yonghyun Jeong and Haeun Noh and Jaejun Yoo and Seungryul Baek and Jongwon Choi},
-      year={2025},
-      eprint={2507.02398},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2507.02398}, 
-}</div>
-    </div>
-    <div style="text-align: center; margin-top: 20px;">
-      <button onclick="copyBibTeX()" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(59,130,246,0.3);" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(59,130,246,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(59,130,246,0.3)'">
-        📋 Copy BibTeX
-      </button>
+    <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn primary" id="copyBtn">📋 Copy BibTeX</button>
+      <a class="btn" href="#demos">⬇️ Jump to Demos</a>
+      <button class="btn" aria-disabled="true" title="Coming soon">📄 ICCV Paper (soon)</button>
+      <button class="btn" aria-disabled="true" title="Coming soon">🤗 Hugging Face Demo (soon)</button>
     </div>
   </section>
+
+  <!-- Acknowledgement -->
+  <section id="ack" class="section">
+    <h2>🙏 Acknowledgement</h2>
+    <div class="card">
+      <p>This work was partly supported by the IITP grant funded by the Korea government (MSIT): No. RS-2025-02263841: Development of a Real-time Multimodal Framework for Comprehensive Deepfake Detection Incorporating Common Sense Error AnalysisRS-2021-II211341: Artificial Intelligence Graduate School Program (Chung-Ang University) No. RS-2020-II201336: AIGS program (UNIST) </p>
+    </div>
+  </section>
+
+  <footer>© 2025 PwTF‑DVD. Design rev • Made with ❤ for ICCV 2025.</footer>
+
+  <button class="scrolltop" id="scrollTopBtn" aria-label="Scroll to top">⬆️</button>
 
   <script>
-    function copyBibTeX() {
-      const bibtex = `@misc{kim2025spatialfrequencypixelwisetemporal,
-      title={Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection}, 
-      author={Taehoon Kim and Jongwook Choi and Yonghyun Jeong and Haeun Noh and Jaejun Yoo and Seungryul Baek and Jongwon Choi},
-      year={2025},
-      eprint={2507.02398},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2507.02398}, 
-}`;
-      navigator.clipboard.writeText(bibtex).then(function() {
-        const button = document.querySelector('button');
-        const originalText = button.innerHTML;
-        button.innerHTML = '✅ Copied!';
-        button.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-        setTimeout(function() {
-          button.innerHTML = originalText;
-          button.style.background = 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)';
-        }, 2000);
-      });
-    }
-  </script>
+    // Theme toggle (persisted)
+    const root = document.documentElement;
+    let saved = localStorage.getItem('theme') || 'light';
+    if (saved === 'light') root.classList.add('light');
+    document.getElementById('modeToggle').checked = (saved === 'light');
+    document.getElementById('modeToggle').addEventListener('change', (e) => {
+      if (e.target.checked) { root.classList.add('light'); localStorage.setItem('theme','light'); }
+      else { root.classList.remove('light'); localStorage.setItem('theme','dark'); }
+    });
 
-  <section id="acknowledgement" class="section" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; max-width: 700px; margin: 40px auto 0 auto; padding: 28px 0 20px 0; border-radius: 20px; box-shadow: 0 4px 20px rgba(245,158,11,0.15);">
-    <div style="text-align: center; margin-bottom: 20px;">
-      <h3 style="color: #92400e; font-size: 1.3em; margin-bottom: 8px; letter-spacing: 0.5px; font-weight: 700;">🙏 Acknowledgement</h3>
-      <div style="width: 60px; height: 3px; background: linear-gradient(90deg, #f59e0b, #d97706); margin: 0 auto; border-radius: 2px;"></div>
-    </div>
-    <div style="background: rgba(255,255,255,0.8); border: 1px solid #fbbf24; border-radius: 12px; padding: 20px; margin: 0 24px; backdrop-filter: blur(10px);">
-      <div style="color: #78350f; font-size: 0.95em; line-height: 1.6; text-align: center;">
-        This work was partly supported by <strong>Institute of Information & Communication Technology Planning & Evaluation (IITP)</strong> grant funded by the Korea government (MSIT):
-      </div>
-      <div style="margin-top: 16px; padding: 16px; background: linear-gradient(135deg, #fef7ed 0%, #ffedd5 100%); border-radius: 8px; border-left: 4px solid #f59e0b;">
-        <ul style="color: #92400e; font-size: 0.9em; line-height: 1.5; margin: 0; padding-left: 20px; text-align: left;">
-          <li style="margin-bottom: 8px;"><strong>No. RS-2025-02263841:</strong> Development of a Real-time Multimodal Framework for Comprehensive Deepfake Detection Incorporating Common Sense Error Analysis</li>
-          <li style="margin-bottom: 8px;"><strong>RS-2021-II211341:</strong> Artificial Intelligence Graduate School Program (Chung-Ang University)</li>
-          <li><strong>No. RS-2020-II201336:</strong> AIGS program (UNIST)</li>
-        </ul>
-      </div>
-    </div>
-    </div>
-  </section>
+    // Copy BibTeX
+    const copyBtn = document.getElementById('copyBtn');
+    copyBtn.addEventListener('click', async () => {
+      const text = document.querySelector('#bibtexBox pre').innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        const old = copyBtn.textContent; copyBtn.textContent = '✅ Copied!';
+        copyBtn.style.background = 'linear-gradient(180deg,#10b981,#059669)';
+        setTimeout(() => { copyBtn.textContent = old; copyBtn.removeAttribute('style'); }, 1600);
+      } catch (err) { alert('Copy failed'); }
+    });
+
+    // Scroll to top
+    document.getElementById('scrollTopBtn').addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Improve keyboard focus ring on links/buttons
+    for (const el of document.querySelectorAll('a, button')) {
+      el.addEventListener('focus', () => el.style.outline = `2px solid var(--ring)`);
+      el.addEventListener('blur', () => el.style.outline = 'none');
+    }
+  
+    // === Simple carousel logic ===
+    (function(){
+      const slides = document.getElementById('slides');
+      if(!slides) return;
+      const prev = document.querySelector('.media-slider .prev');
+      const next = document.querySelector('.media-slider .next');
+      const thumbs = document.querySelectorAll('.thumb');
+      let idx = 0; const count = slides.children.length;
+      function go(i){ idx = (i + count) % count; slides.scrollTo({ left: idx * slides.clientWidth, behavior: 'smooth' }); }
+      prev && prev.addEventListener('click', ()=> go(idx-1));
+      next && next.addEventListener('click', ()=> go(idx+1));
+      thumbs.forEach(t=> t.addEventListener('click', ()=> go(parseInt(t.dataset.goto))));
+      window.addEventListener('resize', ()=> go(idx));
+    })();
+  </script>
 </body>
 </html>
