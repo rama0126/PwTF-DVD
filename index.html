@@ -146,7 +146,11 @@
     .player video{ width:100%; height:100%; object-fit:contain; background:#000; }
     .arrow{ width:42px; height:42px; display:grid; place-items:center; border-radius:999px; border:1px solid var(--border); background:var(--card); box-shadow:var(--shadow); cursor:pointer; }
     .arrow:hover{ transform:translateY(-1px); }
-    @media (max-width:700px){ .arrow{ display:none; } }
+    /* Show arrows on mobile too */
+    @media (max-width:700px){ .arrow{ display:grid; position: absolute; top: 50%; transform: translateY(-50%); z-index: 5; opacity:.9; }
+      .media-slider .prev{ left: 8px; }
+      .media-slider .next{ right: 8px; }
+    }
 
     .thumbs{ margin-top:12px; display:flex; gap:10px; overflow-x:auto; padding:4px 2px 6px 2px; }
     .thumb{ display:flex; flex-direction:column; align-items:center; gap:6px; min-width:160px; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:6px; cursor:pointer; }
@@ -154,6 +158,23 @@
     .thumb span{ font-size:.85rem; color:var(--fg); font-weight:600; }
     .thumb:focus,.thumb:hover{ outline:2px solid var(--ring); }
 
+    /* Mobile-first UI refinements */
+    @media (max-width: 600px) {
+      .proj-btn { font-size: 0.98em; padding: 9px 16px 9px 12px; }
+      .iccv-badge { font-size: 0.98rem; padding: 6px 12px; gap: 6px; }
+      .section { padding: 16px 14px 12px 14px; }
+      h1 { font-size: 1.08rem; line-height: 1.3; }
+      .fig-row { gap: 14px; }
+      .fig-card img, .fig-card.wide img { width: 100%; max-width: 100%; }
+      #citation { margin-top: 24px; }
+    }
+    @media (max-width: 480px) {
+      #demo { padding: 14px 12px !important; border-radius: 14px; }
+      #demo > div { gap: 12px !important; }
+      .proj-btn { width: 100%; justify-content: center; }
+      .iccv-badge { padding: 6px 10px; font-size: 0.95rem; }
+      header { padding-top: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -237,9 +258,11 @@
         <div class="slide" data-index="0">
           <figure>
             <div class="player">
-              <video controls playsinline preload="metadata" oncontextmenu="return false;" controlsList="nodownload">
-                <source src="figures/shining.mp4" type="video/mp4" />
-              </video>
+              <div style="position:relative;">
+                <video class="demo-video" controls playsinline webkit-playsinline x5-playsinline preload="metadata" oncontextmenu="return false;" controlsList="nodownload">
+                  <source src="figures/shining.mp4" type="video/mp4" />
+                </video>
+              </div>
             </div>
             <figcaption>
               <!-- <span>shining.avi (AVI)</span> -->
@@ -252,9 +275,12 @@
         <div class="slide" data-index="1">
           <figure>
             <div class="player">
-              <video controls playsinline preload="metadata" oncontextmenu="return false;" controlsList="nodownload">
-                <source src="figures/baby.mp4" type="video/mp4" />
-              </video>
+              <div style="position:relative;">
+                <video class="demo-video" controls playsinline webkit-playsinline x5-playsinline preload="metadata" oncontextmenu="return false;" controlsList="nodownload">
+                  <source src="figures/baby.mp4" type="video/mp4" />
+                </video>
+
+              </div>
             </div>
             <figcaption>
               <!-- <span>baby.mp4 (MP4)</span> -->
@@ -285,16 +311,22 @@
                 margin: 0 auto;
               "
             >
-              <video 
-                controls 
-                playsinline 
-                preload="metadata" 
-                oncontextmenu="return false;" 
-                controlsList="nodownload"
-                style="width: 100%; height: 100%; object-fit: contain; background: #000; display: block;"
-              >
-                <source src="figures/tiktok.mp4" type="video/mp4" />
-              </video>
+              <div style="position:relative; width:100%; height:100%;">
+                <video 
+                  class="demo-video"
+                  controls 
+                  playsinline 
+                  webkit-playsinline 
+                  x5-playsinline
+                  preload="metadata" 
+                  oncontextmenu="return false;" 
+                  controlsList="nodownload"
+                  style="width: 100%; height: 100%; object-fit: contain; background: #000; display: block;"
+                >
+                  <source src="figures/tiktok.mp4" type="video/mp4" />
+                </video>
+
+              </div>
             </div>
             <figcaption>
               <span class="source">Source: <a href="https://www.tiktok.com/@wildromance10/video/7266665964429708545?is_from_webapp=1&sender_device=pc&web_id=7536255224983193089" target="_blank" rel="noopener">TikTok</a></span>
@@ -401,7 +433,7 @@
     <h2>📚 Citation</h2>
     <div class="codebox" id="bibtexBox">
       <div class="traffic"><i class="r"></i><i class="y"></i><i class="g"></i></div>
-<pre>@misc{kim2025temporalfrequency,
+<pre>@misc{kim2025spatialfrequencypixelwisetemporal,
   title        = {Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection},
   author       = {Taehoon Kim and Jongwook Choi and Yonghyun Jeong and Haeun Noh and Jaejun Yoo and Seungryul Baek and Jongwon Choi},
   year         = {2025},
