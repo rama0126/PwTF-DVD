@@ -15,8 +15,6 @@ We introduce a deepfake video detection approach that exploits pixel-wise tempor
 
 
 ## Updates
-- **[NEW] Preprocessing Code Uploaded**  
-  Scripts for video frame extraction and pixel-wise FFT computation are now available under `preprocess/`.
-
-
+- **[NEW]  New Code Uploaded**  
+  Code under `preprocess/`, `inference/` 
 ---
