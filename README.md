@@ -21,7 +21,7 @@ We introduce a deepfake video detection approach that exploits pixel-wise tempor
 - inference: `./inference/test_on_raw_video.py --video [video_path] --out_dir [output_path] --model_path [model_path]`
 - Additional modules will be uploaded continuously.
 
-# Introduce of Previous Research for Video Deepfake Detection
+## Introduction of Previous Research for Video Deepfake Detection
 [FTCN: Exploring Temporal Coherence for More General Video Face Forgery Detection (ICCV 2021)](https://arxiv.org/abs/2108.06693)
 - GitHub:[https://github.com/yinglinzheng/FTCN](https://github.com/yinglinzheng/FTCN)
 - Paper: [arXiv:2108.06693](https://arxiv.org/abs/2108.06693)
