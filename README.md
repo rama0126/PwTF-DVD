@@ -17,4 +17,8 @@ We introduce a deepfake video detection approach that exploits pixel-wise tempor
 ## Updates
 - **[NEW]  New Code Uploaded**  
   Code under `preprocess/`, `inference/` 
+
+
+- Additional modules will be uploaded continuously.
+
 ---
