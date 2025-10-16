@@ -3,7 +3,7 @@ This repository contains the official implementation of our ICCV 2025 paper,
 "Beyond Spatial Frequency: Pixel-wise Temporal Frequency-based Deepfake Video Detection."
  [arxiv](https://arxiv.org/abs/2507.02398)  [page](https://rama0126.github.io/PwTF-DVD/)
 
-
+ 
 
 
 
