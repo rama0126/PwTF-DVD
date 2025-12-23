@@ -33,8 +33,6 @@ pip install torchmetrics pytorch-losses
 ```
 
 ## Updates
-- **[NEW]  New Code Uploaded**  
-  Code under `preprocess/`, `inference/` 
 
 - inference: `./inference/test_on_raw_video.py --video [video_path] --out_dir [output_path] --model_path [model_path]`
 - model weights: [Google Drive](https://drive.google.com/file/d/10D74h8NhpZ2Ut3Te_ieTIAZYOTL6mNQd/view?usp=drive_link)
