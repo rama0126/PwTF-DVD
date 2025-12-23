@@ -37,7 +37,7 @@ pip install torchmetrics pytorch-losses
   Code under `preprocess/`, `inference/` 
 
 - inference: `./inference/test_on_raw_video.py --video [video_path] --out_dir [output_path] --model_path [model_path]`
-- deploy model weights: [Google Drive](https://drive.google.com/file/d/10D74h8NhpZ2Ut3Te_ieTIAZYOTL6mNQd/view?usp=drive_link)
+- model weights: [Google Drive](https://drive.google.com/file/d/10D74h8NhpZ2Ut3Te_ieTIAZYOTL6mNQd/view?usp=drive_link)
 
 ## Key References for Video Deepfake Detection
 The following works have significantly influenced our understanding and design choices for video deepfake detection.
