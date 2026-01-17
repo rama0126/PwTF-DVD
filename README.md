@@ -12,14 +12,30 @@ This repository contains the official implementation of our ICCV 2025 paper,
 
 We introduce a deepfake video detection approach that exploits pixel-wise temporal inconsistencies, which traditional spatial frequency-based detectors often overlook. Traditional detectors represent temporal information merely by stacking spatial frequency spectra across frames, resulting in the failure to detect temporal artifacts in the pixel plane. Our approach performs a 1D Fourier transform on the time axis for each pixel, extracting features highly sensitive to temporal inconsistencies, especially in areas prone to unnatural movements. To precisely locate regions containing the temporal artifacts, we introduce an attention proposal module trained in an end-to-end manner. Additionally, our joint transformer module effectively integrates pixel-wise temporal frequency features with spatio-temporal context features, expanding the range of detectable forgery artifacts. Our framework represents a significant advancement in deepfake video detection, providing robust performance across diverse and challenging detection scenarios.
 
+## Environment Setting
+### System Setting
+```
+apt-get update
 
+apt-get -y install libgl1-mesa-glx &&
+apt-get -y install libglib2.0-0
+
+apt-get install -y libsm6 &&
+apt-get -y install libxext6 &&
+apt-get -y install libxrender-dev
+
+apt-get install -y libx11-6
+```
+### Python Dependencies
+```
+pip install opencv-python sympy timm simplejson fvcore
+pip install torchmetrics pytorch-losses
+```
 
 ## Updates
-- **[NEW]  New Code Uploaded**  
-  Code under `preprocess/`, `inference/` 
 
 - inference: `./inference/test_on_raw_video.py --video [video_path] --out_dir [output_path] --model_path [model_path]`
-- Additional codes will be uploaded continuously.
+- model weights: [Google Drive](https://drive.google.com/file/d/10D74h8NhpZ2Ut3Te_ieTIAZYOTL6mNQd/view?usp=drive_link)
 
 ## Key References for Video Deepfake Detection
 The following works have significantly influenced our understanding and design choices for video deepfake detection.
